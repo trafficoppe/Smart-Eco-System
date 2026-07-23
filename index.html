@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แบบบันทึกส่งปริมาณขยะกิจกรรม | กองกายภาพและสิ่งแวดล้อม</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="container">
+    <header class="header-card">
+      <h1>บันทึกปริมาณขยะกิจกรรม</h1>
+      <p class="subtitle">กองกายภาพและสิ่งแวดล้อม มหาวิทยาลัยมหิดล</p>
+      <span class="badge">Smart Eco-System</span>
+    </header>
+
+    <form id="wasteForm" novalidate>
+      
+      <!-- ส่วนที่ 1: ข้อมูลผู้บันทึกและหน่วยงาน -->
+      <section class="form-section">
+        <h2>ส่วนที่ 1: ข้อมูลผู้บันทึกและหน่วยงาน</h2>
+        
+        <div class="form-group">
+          <label for="recordDate">วันที่จัดเก็บข้อมูล <span class="req">*</span></label>
+          <input type="date" id="recordDate" name="recordDate" required>
+        </div>
+
+        <div class="form-group">
+          <label for="fullName">ชื่อ-นามสกุล-ตำแหน่ง <span class="req">*</span></label>
+          <input type="text" id="fullName" name="fullName" placeholder="ตัวอย่าง: สมชาย ใจดี - นักวิชาการ" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">อีเมลมหาวิทยาลัยมหิดล <span class="req">*</span></label>
+          <input type="email" id="email" name="email" placeholder="ตัวอย่าง: example@mahidol.ac.th" required>
+          <small class="error-text" id="emailError"></small>
+        </div>
+
+        <div class="form-group autocomplete">
+          <label for="departmentInput">คณะ / ส่วนงาน / ศูนย์ / สถาบัน <span class="req">*</span></label>
+          <input type="text" id="departmentInput" name="departmentInput" placeholder="พิมพ์ชื่อเต็ม หรือตัวย่อ เช่น MT, กายภาพ" autocomplete="off" required>
+        </div>
+      </section>
+
+      <!-- ส่วนที่ 2 (แบบ Dynamic จะแสดงเฉพาะเลือกกองกายภาพ) -->
+      <section class="form-section" id="dynamicSection" style="display: none;">
+        <h2 id="dynamicTitle">ส่วนที่ 2: รายละเอียดพื้นที่</h2>
+        
+        <div class="form-group" id="physicalPointContainer">
+          <label for="pointInput">หมายเลขจุดเก็บ / ชื่อจุดย่อย <span class="req">*</span></label>
+          <input type="text" id="pointInput" name="pointInput" placeholder="ตัวอย่าง: จุดที่ 1, จุดที่ 30, โถงอาคารเรียนรวม">
+          <small class="help-text">โปรดระบุหมายเลขจุด หรือชื่อพื้นที่ย่อยที่ลงเก็บข้อมูล</small>
+        </div>
+      </section>
+
+      <!-- ปริมาณขยะและของเสีย -->
+      <section class="form-section">
+        <h2 id="titleSectionWaste">ส่วนที่ 3: ปริมาณขยะและของเสีย (กิโลกรัม)</h2>
+        
+        <div class="form-group">
+          <label for="activityName">ชื่อกิจกรรมที่จัดเก็บ</label>
+          <input type="text" id="activityName" name="activityName" placeholder="ตัวอย่าง: งานปฐมนิเทศ, นิทรรศการวิชาการ">
+        </div>
+        
+        <!-- เพิ่ม ID ที่ div นี้เพื่อให้ซ่อนได้เมื่อเลือกกองกายภาพ -->
+        <div class="form-group autocomplete" id="collectLocationContainer">
+          <label for="collectLocation">สถานที่รวบรวมขยะ</label>
+          <input type="text" id="collectLocation" name="collectLocation" placeholder="พิมพ์ชื่อเต็ม หรือตัวย่อ เช่น MLC, สิทธาคาร" autocomplete="off">
+        </div>
+
+        <!-- เอา value="0" ออกเพื่อให้กรอกตัวเลขได้ทันที -->
+        <div class="grid-2">
+          <div class="form-group"><label>1. ขยะเศษอาหาร</label><input type="number" step="0.01" min="0" name="foodWaste"></div>
+          <div class="form-group"><label>2. น้ำเสีย</label><input type="number" step="0.01" min="0" name="wasteWater"></div>
+          <div class="form-group"><label>3. ขยะรีไซเคิล</label><input type="number" step="0.01" min="0" name="recycleWaste"></div>
+          <div class="form-group"><label>4. ขยะพลังงาน</label><input type="number" step="0.01" min="0" name="energyWaste"></div>
+          <div class="form-group"><label>5. ขยะทั่วไป (ฝังกลบ)</label><input type="number" step="0.01" min="0" name="generalWaste"></div>
+          <div class="form-group"><label>6. ขยะเยื่อพืช (ทำปุ๋ย)</label><input type="number" step="0.01" min="0" name="compostWaste"></div>
+        </div>
+        <div class="summary-box">
+          <span>ปริมาณรวมทั้งหมด:</span>
+          <strong id="totalWasteDisplay">0.00</strong> กิโลกรัม
+        </div>
+      </section>
+
+      <!-- ข้อเสนอแนะ -->
+      <section class="form-section">
+        <h2 id="titleSectionFeedback">ส่วนที่ 4: ข้อเสนอแนะ / แจ้งปัญหา</h2>
+        <div class="form-group">
+          <textarea id="feedback" name="feedback" rows="3" placeholder="ระบุคำแนะนำ หรือแจ้งปัญหาที่พบ..."></textarea>
+        </div>
+      </section>
+
+      <button type="submit" class="submit-btn" id="submitBtn">ส่งข้อมูลเข้าสู่ระบบ</button>
+    </form>
+  </div>
+
+  <!-- Popup แจ้งเตือนเมื่อส่งข้อมูลสำเร็จ -->
+  <div id="successPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content">
+      <div class="popup-icon">✓</div>
+      <h3>ส่งข้อมูลเรียบร้อย</h3>
+      <p>ขอบคุณค่ะ</p>
+      <button id="closePopupBtn" class="popup-close-btn">ตกลง</button>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

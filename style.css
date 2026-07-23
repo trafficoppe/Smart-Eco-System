@@ -1,0 +1,276 @@
+:root {
+  --primary-color: #005691;
+  --secondary-color: #48BB78;
+  --bg-color: #F0FDF4;
+  --card-bg: #FFFFFF;
+  --text-color: #2D3748;
+  --border-color: #CBD5E0;
+  --error-color: #E53E3E;
+  --radius: 20px;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Itim', cursive, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  padding: 20px 10px;
+  display: flex;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.container {
+  width: 100%;
+  max-width: 700px;
+}
+
+.header-card {
+  background: linear-gradient(135deg, #005691 0%, #2B6CB0 100%);
+  color: white;
+  padding: 30px 20px;
+  border-radius: var(--radius);
+  text-align: center;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 20px rgba(0, 86, 145, 0.15);
+}
+
+.header-card h1 {
+  font-size: 32px;
+  font-weight: normal;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 20px;
+  opacity: 0.9;
+}
+
+.badge {
+  display: inline-block;
+  background-color: var(--secondary-color);
+  color: white;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 16px;
+  margin-top: 16px;
+}
+
+.form-section {
+  background: var(--card-bg);
+  padding: 24px;
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 3px solid #E6FFFA;
+}
+
+.form-section h2 {
+  font-size: 24px;
+  color: var(--primary-color);
+  margin-bottom: 20px;
+  border-bottom: 3px dashed #E2E8F0;
+  padding-bottom: 12px;
+  font-weight: normal;
+}
+
+.form-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+label {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: #4A5568;
+}
+
+.req {
+  color: var(--error-color);
+}
+
+input, select, textarea {
+  padding: 12px 16px;
+  border: 3px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 18px;
+  transition: all 0.2s ease;
+  outline: none;
+  background-color: #F7FAFC;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--secondary-color);
+  background-color: #FFFFFF;
+}
+
+.help-text {
+  font-size: 15px;
+  color: #718096;
+  margin-top: 6px;
+}
+
+/* Autocomplete Styles */
+.autocomplete {
+  position: relative;
+  display: flex;
+}
+.autocomplete-items {
+  position: absolute;
+  border: 3px solid var(--secondary-color);
+  border-top: none;
+  border-bottom: none;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  z-index: 99;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #FFFFFF;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  max-height: 200px;
+  overflow-y: auto;
+}
+.autocomplete-items div {
+  padding: 12px 16px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #E2E8F0;
+  font-size: 18px;
+}
+.autocomplete-items div:hover {
+  background-color: #E6FFFA;
+  color: var(--primary-color);
+}
+.autocomplete-active {
+  background-color: var(--secondary-color) !important;
+  color: #ffffff;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 500px) {
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+.summary-box {
+  background-color: #EBF8FF;
+  border: 3px dashed #3182CE;
+  padding: 16px;
+  border-radius: 12px;
+  margin-top: 16px;
+  text-align: right;
+  font-size: 20px;
+  color: #2B6CB0;
+}
+
+.summary-box strong {
+  font-size: 28px;
+  color: var(--primary-color);
+}
+
+.error-text {
+  color: var(--error-color);
+  font-size: 16px;
+  margin-top: 6px;
+  display: none;
+}
+
+.submit-btn {
+  width: 100%;
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  padding: 18px;
+  border-radius: var(--radius);
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 6px 15px rgba(72, 187, 120, 0.3);
+  transition: transform 0.1s ease, background-color 0.2s;
+  margin-bottom: 40px;
+}
+
+.submit-btn:hover {
+  background-color: #38A169;
+  transform: translateY(-3px);
+}
+
+/* -------------------------------------- */
+/* สไตล์สำหรับ Popup เมื่อส่งข้อมูลสำเร็จ */
+/* -------------------------------------- */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.popup-content {
+  background: white;
+  padding: 30px;
+  border-radius: 24px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  animation: popupIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  max-width: 320px;
+  width: 90%;
+  border: 4px solid var(--secondary-color);
+}
+
+.popup-icon {
+  font-size: 60px;
+  color: var(--secondary-color);
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 5px rgba(72, 187, 120, 0.3);
+}
+
+.popup-content h3 {
+  color: var(--primary-color);
+  margin-bottom: 8px;
+  font-size: 26px;
+}
+
+.popup-content p {
+  color: #4A5568;
+  font-size: 20px;
+  margin-bottom: 24px;
+}
+
+.popup-close-btn {
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 20px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+}
+
+.popup-close-btn:hover {
+  background-color: #38A169;
+}
+
+@keyframes popupIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
