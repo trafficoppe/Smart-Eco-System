@@ -45,7 +45,7 @@ body {
 .header-banner {
   width: 100%;
   height: auto;
-  margin-top: -12%; 
+  margin-top: -24%; 
   /* ดึงข้อความให้ขึ้นมาอยู่ใกล้โลโก้ในระยะที่พอดี */
   margin-bottom: -24%; 
 }
