@@ -6,12 +6,9 @@ const formState = {
   groupName: '', 
   locationDetail: '', 
   activityName: '',
-  wasteMetrics: {
-    recycle_bottle: 0,
-    recycle_glass: 0,
-    recycle_can: 0,
-    recycle_straw: 0,
-    recycle_cap: 0,
+ wasteMetrics: {
+    recycle_plastic_bottle: 0,    // เพิ่มช่องที่ 1
+    recycle_glass_can_other: 0,   // เพิ่มช่องที่ 2
     energy_plastic: 0,
     energy_stick: 0,
     energy_spoon: 0,

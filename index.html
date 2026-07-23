@@ -60,10 +60,13 @@
 
       <section class="form-section">
         <h2>ขยะรีไซเคิล</h2>
+        <div class="form-group">
+          <label>1. ขวดพลาสติก</label>
+          <input type="number" step="0.01" min="0" name="recycle_plastic_bottle" placeholder="0.00">
+        </div>
         <div class="form-group" style="margin-bottom: 0;">
-          <!-- รวมเป็นช่องเดียว และมีคำแนะนำให้เข้าใจง่าย -->
-          <label>ขยะรีไซเคิล (เช่น ขวดพลาสติก, ขวดแก้ว, กระป๋อง)</label>
-          <input type="number" step="0.01" min="0" name="recycle_total" placeholder="0.00">
+          <label>2. ขวดแก้ว, กระป๋อง, อื่นๆ</label>
+          <input type="number" step="0.01" min="0" name="recycle_glass_can_other" placeholder="0.00">
         </div>
       </section>
 
