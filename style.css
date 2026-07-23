@@ -11,7 +11,7 @@
 
 * {
   box-sizing: border-box;
-  font-family: 'Itim', cursive, sans-serif;
+  font-family: 'Anuphan', sans-serif;
   margin: 0;
   padding: 0;
 }
@@ -31,26 +31,35 @@ body {
 }
 
 .header-card {
-  background: linear-gradient(135deg, #005691 0%, #2B6CB0 100%);
-  color: white;
-  padding: 30px 20px;
-  border-radius: var(--radius);
-  text-align: center;
+  background: #FFFFFF;
+  padding: 0 0 20px 0; /* ลดพื้นที่ด้านล่างลงนิดนึงเพราะเอาป้ายเขียวออกแล้ว */
   margin-bottom: 24px;
-  box-shadow: 0 8px 20px rgba(0, 86, 145, 0.15);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
 }
 
-.header-card h1 {
-  font-size: 32px;
-  font-weight: normal;
-  margin-bottom: 8px;
+.header-banner {
+  width: 100%;
+  height: auto;
+  margin-top: -12%; 
+  /* ดึงข้อความให้ขึ้นมาอยู่ใกล้โลโก้ในระยะที่พอดี */
+  margin-bottom: -24%; 
 }
 
-.subtitle {
-  font-size: 20px;
-  opacity: 0.9;
+.main-title {
+  font-size: 26px;
+  color: var(--primary-color);
+  font-weight: bold;
+  margin-bottom: 0;
+  margin-top: 0;
+  z-index: 2;
 }
 
+/* คลาส .badge สำหรับ ป้ายชุดขยะครบวงจร (ถ้าในไฟล์มีอยู่แล้วจะใช้ของเดิมก็ได้ครับ แต่ถ้าย้ายที่แล้วเพี้ยนให้ใช้โค้ดนี้ทับไปเลย) */
 .badge {
   display: inline-block;
   background-color: var(--secondary-color);
@@ -58,7 +67,7 @@ body {
   padding: 6px 18px;
   border-radius: 20px;
   font-size: 16px;
-  margin-top: 16px;
+  z-index: 2;
 }
 
 .form-section {
@@ -273,4 +282,10 @@ input:focus, select:focus, textarea:focus {
 @keyframes popupIn {
   0% { transform: scale(0.5); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
+}
+/* การตั้งค่าสำหรับโลโก้กองกายภาพฯ (ปรับใหม่ให้ไม่มีพื้นหลังขาว) */
+.header-logo {
+  max-width: 280px; /* ปรับให้ใหญ่ขึ้นนิดนึงจะได้อ่านชัดๆ */
+  height: auto;
+  margin-bottom: 16px;
 }

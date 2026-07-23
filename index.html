@@ -7,15 +7,15 @@
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
   <div class="container">
     <header class="header-card">
-      <h1>บันทึกปริมาณขยะกิจกรรม</h1>
-      <p class="subtitle">กองกายภาพและสิ่งแวดล้อม มหาวิทยาลัยมหิดล</p>
-      <span class="badge">Smart Eco-System</span>
+      <img src="1.png" alt="โลโก้กองกายภาพและสิ่งแวดล้อม" class="header-banner">
+      <h1 class="main-title">บันทึกปริมาณขยะกิจกรรม</h1>
+      <h1 class="main-title">ชุดขยะครบวงจร</h1>
     </header>
 
     <form id="wasteForm" novalidate>
@@ -44,12 +44,16 @@
           <label for="departmentInput">คณะ / ส่วนงาน / ศูนย์ / สถาบัน <span class="req">*</span></label>
           <input type="text" id="departmentInput" name="departmentInput" placeholder="พิมพ์ชื่อเต็ม หรือตัวย่อ เช่น MT, กายภาพ" autocomplete="off" required>
         </div>
+
+        <div class="form-group" id="groupNameContainer" style="display: none;">
+          <label for="groupName">ชื่อกลุ่ม</label>
+          <input type="text" id="groupName" name="groupName" placeholder="ตัวอย่าง: กลุ่มงานบริหารทั่วไป, ทีม A">
+        </div>
       </section>
 
-      <!-- ส่วนที่ 2 (แบบ Dynamic จะแสดงเฉพาะเลือกกองกายภาพ) -->
+      <!-- ส่วนที่ 2: จะแสดงขึ้นมาเฉพาะเมื่อเป็นกองกายภาพและสิ่งแวดล้อม -->
       <section class="form-section" id="dynamicSection" style="display: none;">
         <h2 id="dynamicTitle">ส่วนที่ 2: รายละเอียดพื้นที่</h2>
-        
         <div class="form-group" id="physicalPointContainer">
           <label for="pointInput">หมายเลขจุดเก็บ / ชื่อจุดย่อย <span class="req">*</span></label>
           <input type="text" id="pointInput" name="pointInput" placeholder="ตัวอย่าง: จุดที่ 1, จุดที่ 30, โถงอาคารเรียนรวม">
@@ -57,22 +61,20 @@
         </div>
       </section>
 
-      <!-- ปริมาณขยะและของเสีย -->
+      <!-- ส่วนที่ 3 (หรือ 2): ปริมาณขยะและของเสีย -->
       <section class="form-section">
-        <h2 id="titleSectionWaste">ส่วนที่ 3: ปริมาณขยะและของเสีย (กิโลกรัม)</h2>
+        <h2 id="titleSectionWaste">ส่วนที่ 2: ปริมาณขยะและของเสีย (กิโลกรัม)</h2>
         
         <div class="form-group">
           <label for="activityName">ชื่อกิจกรรมที่จัดเก็บ</label>
           <input type="text" id="activityName" name="activityName" placeholder="ตัวอย่าง: งานปฐมนิเทศ, นิทรรศการวิชาการ">
         </div>
         
-        <!-- เพิ่ม ID ที่ div นี้เพื่อให้ซ่อนได้เมื่อเลือกกองกายภาพ -->
         <div class="form-group autocomplete" id="collectLocationContainer">
           <label for="collectLocation">สถานที่รวบรวมขยะ</label>
           <input type="text" id="collectLocation" name="collectLocation" placeholder="พิมพ์ชื่อเต็ม หรือตัวย่อ เช่น MLC, สิทธาคาร" autocomplete="off">
         </div>
 
-        <!-- เอา value="0" ออกเพื่อให้กรอกตัวเลขได้ทันที -->
         <div class="grid-2">
           <div class="form-group"><label>1. ขยะเศษอาหาร</label><input type="number" step="0.01" min="0" name="foodWaste"></div>
           <div class="form-group"><label>2. น้ำเสีย</label><input type="number" step="0.01" min="0" name="wasteWater"></div>
@@ -87,9 +89,9 @@
         </div>
       </section>
 
-      <!-- ข้อเสนอแนะ -->
+      <!-- ส่วนที่ 4 (หรือ 3): ข้อเสนอแนะ -->
       <section class="form-section">
-        <h2 id="titleSectionFeedback">ส่วนที่ 4: ข้อเสนอแนะ / แจ้งปัญหา</h2>
+        <h2 id="titleSectionFeedback">ส่วนที่ 3: ข้อเสนอแนะ / แจ้งปัญหา</h2>
         <div class="form-group">
           <textarea id="feedback" name="feedback" rows="3" placeholder="ระบุคำแนะนำ หรือแจ้งปัญหาที่พบ..."></textarea>
         </div>

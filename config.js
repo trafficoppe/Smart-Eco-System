@@ -4,7 +4,7 @@
 
 const CONFIG = {
     GOOGLE_SHEETS: {
-        WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbx6kfBE0FR8RV8sg9PcpXehf0iePrrJHXr-xCGy_f1EWxhHGd8uu4Ht0Kmt2B1uKnQl/exec', 
+        WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbxlDiBMslovdzv0_tbR3MQEkigvV5V16qcJTHmBdddyzeyvtr0k3TC_6O62yOX16knB/exec', 
     },
 
     ORG: {

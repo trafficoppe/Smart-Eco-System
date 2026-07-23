@@ -6,6 +6,7 @@ const formState = {
   fullName: '',
   email: '',
   department: '',
+  groupName: '', 
   isPhysicalDept: false,
   locationDetail: '', 
   activityName: '',
@@ -34,10 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const dynamicSection = document.getElementById('dynamicSection');
   const pointInput = document.getElementById('pointInput');
   const deptInput = document.getElementById('departmentInput');
+  const groupNameInput = document.getElementById('groupName');
+  
+  const physicalPointContainer = document.getElementById('physicalPointContainer');
+  const groupNameContainer = document.getElementById('groupNameContainer');
   
   const activityNameInput = document.getElementById('activityName');
   const collectLocationInput = document.getElementById('collectLocation');
-  const collectLocationContainer = document.getElementById('collectLocationContainer'); // ดึง div สถานที่รวบรวมขยะมาใช้งาน
+  const collectLocationContainer = document.getElementById('collectLocationContainer');
   
   const titleSectionWaste = document.getElementById('titleSectionWaste');
   const titleSectionFeedback = document.getElementById('titleSectionFeedback');
@@ -58,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     name: new Audio('sounds/name.wav'),
     email: new Audio('sounds/Email.wav'),
     dept: new Audio('sounds/dept.wav'),
+    group: new Audio('sounds/group.wav'),
     point: new Audio('sounds/point.wav'), 
     location: new Audio('sounds/location.wav'),
     activity_name: new Audio('sounds/activity_name.wav'),
@@ -91,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('fullName').addEventListener('focus', () => playSound('name', audios.name));
   emailInput.addEventListener('focus', () => playSound('email', audios.email));
   deptInput.addEventListener('focus', () => playSound('dept', audios.dept));
+  groupNameInput.addEventListener('focus', () => playSound('group', audios.group));
   pointInput.addEventListener('focus', () => playSound('point', audios.point));
   activityNameInput.addEventListener('focus', () => playSound('activity_name', audios.activity_name));
   collectLocationInput.addEventListener('focus', () => playSound('collect_loc', audios.collect_loc));
@@ -103,8 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelector('input[name="compostWaste"]').addEventListener('focus', () => playSound('compost', audios.compost));
   
   document.getElementById('feedback').addEventListener('focus', () => playSound('feedback', audios.feedback));
-  
-  const submitBtn = document.getElementById('submitBtn');
+
   // ==========================================
   // ระบบตรวจสอบ Email 
   // ==========================================
@@ -195,30 +201,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // ==========================================
-  // ระบบ Dynamic สลับหน้าฟอร์ม และสลับตัวเลขหัวข้อ
+  // ระบบ Dynamic สลับหน้าฟอร์ม และตัวเลข Section
   // ==========================================
   function updateDynamicForm() {
+    // 1. ถ้าเป็นกองกายภาพและสิ่งแวดล้อม
     if (formState.isPhysicalDept) {
+      
+      // ส่วนที่ 1: ซ่อนช่องชื่อกลุ่ม
+      groupNameContainer.style.display = 'none';
+      groupNameInput.value = '';
+      
+      // แสดงส่วนที่ 2 (จุดเก็บ)
       dynamicSection.style.display = 'block';
       pointInput.required = true;
+      
+      // ปรับลำดับเป็น 1 -> 2 -> 3 -> 4
       titleSectionWaste.textContent = 'ส่วนที่ 3: ปริมาณขยะและของเสีย (กิโลกรัม)';
       titleSectionFeedback.textContent = 'ส่วนที่ 4: ข้อเสนอแนะ / แจ้งปัญหา';
       
-      // เมื่อเป็นกองกายภาพ ซ่อนช่อง "สถานที่รวบรวมขยะ" และล้างค่าออก
+      // ซ่อนช่องสถานที่รวบรวม
       collectLocationContainer.style.display = 'none';
       collectLocationInput.value = '';
-    } else {
+      
+    } 
+    // 2. ถ้าเป็นคณะ/ส่วนงานอื่น
+    else {
+      
+      // ส่วนที่ 1: แสดงช่องชื่อกลุ่ม
+      if (formState.department !== '') {
+         groupNameContainer.style.display = 'flex';
+      }
+      
+      // ซ่อนส่วนที่ 2 เดิม (จุดเก็บ) ไปเลย
       dynamicSection.style.display = 'none';
       pointInput.required = false;
       pointInput.value = ''; 
+      
+      // ปรับลำดับเป็น 1 -> 2 -> 3
       titleSectionWaste.textContent = 'ส่วนที่ 2: ปริมาณขยะและของเสีย (กิโลกรัม)';
       titleSectionFeedback.textContent = 'ส่วนที่ 3: ข้อเสนอแนะ / แจ้งปัญหา';
       
-      // เมื่อเป็นหน่วยงานอื่น แสดงช่อง "สถานที่รวบรวมขยะ" ขึ้นมา
+      // แสดงสถานที่รวบรวม
       collectLocationContainer.style.display = 'flex';
     }
   }
 
+  // เรียกใช้งานค่าเริ่มต้น
   updateDynamicForm();
 
 
@@ -234,7 +262,6 @@ document.addEventListener('DOMContentLoaded', () => {
       totalDisplay.textContent = formState.getTotalWaste().toFixed(2);
     });
   });
-
 
   // ==========================================
   // จัดการปิด Popup เมื่อกด "ตกลง"
@@ -253,12 +280,14 @@ document.addEventListener('DOMContentLoaded', () => {
     formState.recordDate = document.getElementById('recordDate').value;
     formState.fullName = document.getElementById('fullName').value.trim();
     formState.email = document.getElementById('email').value.trim();
+    formState.groupName = groupNameInput.value.trim();
     formState.activityName = activityNameInput.value.trim();
     formState.collectLocation = collectLocationInput.value.trim();
     formState.feedback = document.getElementById('feedback').value.trim();
     
     if(formState.isPhysicalDept) {
         formState.locationDetail = pointInput.value.trim();
+        formState.groupName = '-'; // บังคับใส่ขีดกรณีเป็นกองกายภาพเพื่อไม่ให้ช่องว่าง
         if (!formState.locationDetail) {
           alert('โปรดระบุหมายเลขจุดเก็บ หรือชื่อจุดย่อย ให้ครบถ้วนครับ');
           pointInput.focus();
@@ -286,6 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
       fullName: formState.fullName,
       email: formState.email,
       department: formState.department,
+      groupName: formState.groupName,
       locationDetail: formState.locationDetail,
       activityName: formState.activityName,
       collectLocation: formState.collectLocation,
@@ -294,6 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
       feedback: formState.feedback
     };
 
+    const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = true;
     submitBtn.textContent = 'กำลังบันทึก...';
 
@@ -307,16 +338,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      // 1. แสดง Popup ขึ้นมาก่อน
       successPopup.style.display = 'flex';
-      
-      // 2. เคลียร์ประวัติการเล่นเสียงเก่าออก เพื่อให้เสียง submit ดังได้ชัวร์ๆ
       playedAudios.clear();
-
-      // 3. สั่งให้เล่นเสียงขอบคุณ
       playSound('submit', audios.submit);
       
-      // 4. รีเซ็ตฟอร์ม
       form.reset();
       recordDateInput.valueAsDate = new Date();
       totalDisplay.textContent = '0.00';
