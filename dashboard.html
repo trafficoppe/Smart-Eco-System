@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แดชบอร์ดสรุปปริมาณขยะกิจกรรม</title>
+  <link rel="stylesheet" href="dashboard-style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <div class="dashboard-wrapper">
+    <!-- ปุ่มกลับ -->
+    <a href="index.html" class="back-btn">⬅️ กลับหน้าบันทึกข้อมูล</a>
+
+    <!-- ส่วนหัว -->
+    <div class="dash-header">
+      <h1>📊 แดชบอร์ดสรุปผลการจัดเก็บ</h1>
+      <p>ชุดขยะครบวงจร | กองกายภาพและสิ่งแวดล้อม</p>
+    </div>
+
+    <div id="loading" class="loading-state">กำลังโหลดข้อมูล...</div>
+    
+    <div id="dashboard-content" style="display: none;">
+      
+      <!-- เพิ่มแถบตัวกรอง (Filters) ตรงนี้ครับ -->
+      <div class="filter-section">
+        <select id="filter-year">
+          <option value="all">📅 ทุกปี (รวมทั้งหมด)</option>
+        </select>
+        <select id="filter-dept">
+          <option value="all">🏢 ทุกคณะ/ส่วนงาน (รวมทั้งหมด)</option>
+        </select>
+        <select id="filter-activity">
+          <option value="all">🎯 ทุกกิจกรรม (รวมทั้งหมด)</option>
+        </select>
+      </div>
+
+      <!-- ไฮไลท์ข้อมูล -->
+      <div class="highlight-grid">
+        <div class="highlight-card">
+          <div class="hl-title">ขยะประเภทที่มากที่สุด</div>
+          <div class="hl-value" id="top-waste-type">-</div>
+          <div class="hl-sub" id="top-waste-type-amount">- กก.</div>
+        </div>
+        <div class="highlight-card">
+          <div class="hl-title">หน่วยงานที่ทิ้งมากที่สุด</div>
+          <div class="hl-value hl-text" id="top-department">-</div>
+          <div class="hl-sub" id="top-department-amount">- กก.</div>
+        </div>
+      </div>
+
+      <!-- กราฟต่างๆ -->
+      <div class="chart-card">
+        <h3>ปริมาณขยะแต่ละประเภท (รวมทั้งหมด)</h3>
+        <div class="chart-container-pie">
+          <canvas id="wasteTypeChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>ปริมาณขยะแต่ละกิจกรรม (Top 5)</h3>
+        <div class="chart-container">
+          <canvas id="activityChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="chart-card">
+        <h3>ปริมาณขยะแบ่งตาม คณะ/ส่วนงาน (Top 5)</h3>
+        <div class="chart-container">
+          <canvas id="departmentChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="dashboard-script.js"></script>
+</body>
+</html>

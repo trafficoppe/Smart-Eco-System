@@ -289,3 +289,55 @@ input:focus, select:focus, textarea:focus {
   height: auto;
   margin-bottom: 16px;
 }
+/* ตกแต่งปุ่มแดชบอร์ด */
+.dashboard-btn {
+  display: inline-block;
+  background-color: var(--primary-color, #0056b3); /* ใช้สีน้ำเงินหลัก */
+  color: #ffffff;
+  text-decoration: none;
+  padding: 8px 24px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 12px;
+  margin-bottom: 20px; /* ดันขอบล่างนิดนึงไม่ให้ชิดกรอบ */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.dashboard-btn:hover {
+  background-color: #004494;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+}
+/* ตกแต่งหมวดหมู่ขยะให้แยกเป็นส่วนๆ ชัดเจน */
+.waste-card {
+  background: #fafafa;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 16px 4px 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.waste-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #cbd5e1;
+}
+
+.card-recycle { border-top: 4px solid #0056b3; }
+.card-recycle .waste-title { color: #0056b3; }
+
+.card-energy { border-top: 4px solid #f29f05; }
+.card-energy .waste-title { color: #d98f04; }
+
+.card-compost { border-top: 4px solid #10ac84; }
+.card-compost .waste-title { color: #0d8a6a; }
+
+.card-other { border-top: 4px solid #64748b; }
+.card-other .waste-title { color: #475569; }

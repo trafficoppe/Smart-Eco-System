@@ -1,0 +1,133 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Anuphan', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #f0f4f8;
+  color: #333;
+}
+
+.dashboard-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  background-color: #ffffff;
+  color: #4a5568;
+  padding: 10px 20px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  align-self: flex-start;
+  transition: all 0.2s;
+}
+
+.back-btn:hover { background-color: #e2e8f0; }
+
+.dash-header {
+  background: linear-gradient(135deg, #1a5f7a, #22a699); /* ธีมน้ำเงิน-เขียว */
+  color: white;
+  padding: 24px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(26, 95, 122, 0.2);
+}
+
+.dash-header h1 { font-size: 24px; margin-bottom: 8px; }
+.dash-header p { font-size: 14px; opacity: 0.9; }
+
+/* ส่วนไฮไลท์ข้อมูล */
+.highlight-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.highlight-card {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  text-align: center;
+  border-top: 4px solid #f29f05;
+}
+.highlight-card:nth-child(2) { border-top-color: #f25c05; }
+
+.hl-title { font-size: 13px; color: #666; margin-bottom: 8px; }
+.hl-value { font-size: 22px; font-weight: bold; color: #1a5f7a; }
+.hl-value.hl-text { font-size: 16px; } /* ปรับขนาดให้ชื่อคณะยาวๆ */
+.hl-sub { font-size: 13px; color: #888; margin-top: 4px; }
+
+/* กรอบกราฟ */
+.chart-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.chart-card h3 {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.chart-container {
+  position: relative;
+  height: 250px;
+  width: 100%;
+}
+
+.chart-container-pie {
+  position: relative;
+  height: 300px;
+  width: 100%;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #666;
+}
+/* ตกแต่งแถบตัวกรอง (Filter Section) */
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.filter-section select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+  color: #333;
+  background-color: #f8fafc;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.filter-section select:hover, .filter-section select:focus {
+  border-color: #22a699;
+  background-color: #ffffff;
+}

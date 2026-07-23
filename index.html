@@ -15,14 +15,20 @@
     <header class="header-card">
       <img src="1.png" alt="โลโก้กองกายภาพและสิ่งแวดล้อม" class="header-banner">
       <h1 class="main-title">บันทึกปริมาณขยะกิจกรรม</h1>
-      <h1 class="main-title">ชุดแยกขยะครบวงจร</h1>
+      <a href="dashboard.html" class="dashboard-btn" target="_blank">📊 ดูแดชบอร์ดสรุปผล</a>
     </header>
 
     <form id="wasteForm" novalidate>
       
       <!-- ส่วนที่ 1: ข้อมูลผู้บันทึกและหน่วยงาน -->
       <section class="form-section">
-        <h2>ส่วนที่ 1: ข้อมูลผู้บันทึกและหน่วยงาน</h2>
+        <h2>ข้อมูลผู้บันทึกและหน่วยงาน</h2>
+
+        <div class="form-group">
+          <label for="email">อีเมลมหาวิทยาลัยมหิดล <span class="req">*</span></label>
+          <input type="email" id="email" name="email" placeholder="ตัวอย่าง: example@mahidol.ac.th" required>
+          <small class="error-text" id="emailError"></small>
+        </div>
         
         <div class="form-group">
           <label for="recordDate">วันที่จัดเก็บข้อมูล <span class="req">*</span></label>
@@ -30,68 +36,87 @@
         </div>
 
         <div class="form-group">
-          <label for="fullName">ชื่อ-นามสกุล-ตำแหน่ง <span class="req">*</span></label>
-          <input type="text" id="fullName" name="fullName" placeholder="ตัวอย่าง: สมชาย ใจดี - นักวิชาการ" required>
-        </div>
-
-        <div class="form-group">
-          <label for="email">อีเมลมหาวิทยาลัยมหิดล <span class="req">*</span></label>
-          <input type="email" id="email" name="email" placeholder="ตัวอย่าง: example@mahidol.ac.th" required>
-          <small class="error-text" id="emailError"></small>
+          <label for="fullName">ชื่อ-นามสกุล <span class="req">*</span></label>
+          <input type="text" id="fullName" name="fullName" placeholder="ตัวอย่าง: สมชาย ใจดี" required>
         </div>
 
         <div class="form-group autocomplete">
           <label for="departmentInput">คณะ / ส่วนงาน / ศูนย์ / สถาบัน <span class="req">*</span></label>
-          <input type="text" id="departmentInput" name="departmentInput" placeholder="พิมพ์ชื่อเต็ม หรือตัวย่อ เช่น MT, กายภาพ" autocomplete="off" required>
+          <input type="text" id="departmentInput" name="departmentInput" placeholder="พิมพ์ชื่อเต็ม หรือตัวย่อ" autocomplete="off" required>
         </div>
 
-        <div class="form-group" id="groupNameContainer" style="display: none;">
-          <label for="groupName">ชื่อกลุ่ม</label>
-          <input type="text" id="groupName" name="groupName" placeholder="ตัวอย่าง: กลุ่มงานบริหารทั่วไป, ทีม A">
-        </div>
-      </section>
-
-      <!-- ส่วนที่ 2: จะแสดงขึ้นมาเฉพาะเมื่อเป็นกองกายภาพและสิ่งแวดล้อม -->
-      <section class="form-section" id="dynamicSection" style="display: none;">
-        <h2 id="dynamicTitle">ส่วนที่ 2: รายละเอียดพื้นที่</h2>
-        <div class="form-group" id="physicalPointContainer">
-          <label for="pointInput">หมายเลขจุดเก็บ / ชื่อจุดย่อย <span class="req">*</span></label>
-          <input type="text" id="pointInput" name="pointInput" placeholder="ตัวอย่าง: จุดที่ 1, จุดที่ 30, โถงอาคารเรียนรวม">
-          <small class="help-text">โปรดระบุหมายเลขจุด หรือชื่อพื้นที่ย่อยที่ลงเก็บข้อมูล</small>
-        </div>
-      </section>
-
-      <!-- ส่วนที่ 3 (หรือ 2): ปริมาณขยะและของเสีย -->
-      <section class="form-section">
-        <h2 id="titleSectionWaste">ส่วนที่ 2: ปริมาณขยะแต่ละประเภท (กิโลกรัม)</h2>
-        
+        <!-- ย้ายหมายเลขจุดเก็บมาไว้ตรงนี้แทนชื่อกลุ่ม -->
         <div class="form-group">
-          <label for="activityName">ชื่อกิจกรรมที่จัดเก็บ</label>
-          <input type="text" id="activityName" name="activityName" placeholder="ตัวอย่าง: งานปฐมนิเทศ, นิทรรศการวิชาการ">
+          <label for="pointInput">หมายเลขจุดเก็บ <span class="req">*</span></label>
+          <!-- เปลี่ยนจาก type="number" เป็น text แล้วบังคับด้วย pattern/maxlength -->
+          <input type="text" id="pointInput" name="pointInput" placeholder="ตัวอย่าง: 1, 2, 3" 
+                 maxlength="1" 
+                 pattern="[0-9]" 
+                 inputmode="numeric" 
+                 required>
+          <small style="display:block; color:#666; margin-top:4px; font-size:13px;">กรอกตัวเลขได้ 1 ตัวเท่านั้น (0-9)</small>
         </div>
-        
-        <div class="form-group autocomplete" id="collectLocationContainer">
-          <label for="collectLocation">สถานที่รวบรวมขยะ</label>
-          <input type="text" id="collectLocation" name="collectLocation" placeholder="พิมพ์ชื่อเต็ม หรือตัวย่อ เช่น MLC, สิทธาคาร" autocomplete="off">
-        </div>
+      </section>
 
-        <div class="grid-2">
-          <div class="form-group"><label>1. ขยะเศษอาหาร</label><input type="number" step="0.01" min="0" name="foodWaste"></div>
-          <div class="form-group"><label>2. น้ำเสีย</label><input type="number" step="0.01" min="0" name="wasteWater"></div>
-          <div class="form-group"><label>3. ขยะรีไซเคิล</label><input type="number" step="0.01" min="0" name="recycleWaste"></div>
-          <div class="form-group"><label>4. ขยะพลังงาน</label><input type="number" step="0.01" min="0" name="energyWaste"></div>
-          <div class="form-group"><label>5. ขยะทั่วไป (ฝังกลบ)</label><input type="number" step="0.01" min="0" name="generalWaste"></div>
-          <div class="form-group"><label>6. ขยะเยื่อพืช (ทำปุ๋ย)</label><input type="number" step="0.01" min="0" name="compostWaste"></div>
-        </div>
-        <div class="summary-box">
+      <section class="form-section">
+        <h2>ขยะรีไซเคิล</h2>
+        <div class="form-group"><label>ขวดน้ำพลาสติก</label><input type="number" step="0.01" min="0" name="recycle_bottle" placeholder="0.00"></div>
+        <div class="form-group"><label>ขวดแก้ว</label><input type="number" step="0.01" min="0" name="recycle_glass" placeholder="0.00"></div>
+        <div class="form-group"><label>กระป๋อง</label><input type="number" step="0.01" min="0" name="recycle_can" placeholder="0.00"></div>
+        <div class="form-group"><label>หลอดพลาสติก</label><input type="number" step="0.01" min="0" name="recycle_straw" placeholder="0.00"></div>
+        <div class="form-group" style="margin-bottom: 0;"><label>ฝาขวด</label><input type="number" step="0.01" min="0" name="recycle_cap" placeholder="0.00"></div>
+      </section>
+
+      <section class="form-section">
+        <h2>ขยะพลังงาน</h2>
+        <div class="form-group"><label>ภาชนะพลาสติก</label><input type="number" step="0.01" min="0" name="energy_plastic" placeholder="0.00"></div>
+        <div class="form-group"><label>ไม้เสียบลูกชิ้น/ไม้ต่างๆ</label><input type="number" step="0.01" min="0" name="energy_stick" placeholder="0.00"></div>
+        <div class="form-group" style="margin-bottom: 0;"><label>ช้อนส้อมพลาสติก</label><input type="number" step="0.01" min="0" name="energy_spoon" placeholder="0.00"></div>
+      </section>
+
+      <section class="form-section">
+        <h2>ขยะทำปุ๋ย</h2>
+        <div class="form-group"><label>ภาชนะเยื่อพืช</label><input type="number" step="0.01" min="0" name="compost_plant" placeholder="0.00"></div>
+        <div class="form-group" style="margin-bottom: 0;"><label>เศษอาหาร</label><input type="number" step="0.01" min="0" name="compost_food" placeholder="0.00"></div>
+      </section>
+
+      <section class="form-section">
+        <h2>ขยะประเภทอื่นๆ</h2>
+        <div class="form-group"><label>น้ำเสีย</label><input type="number" step="0.01" min="0" name="wasteWater" placeholder="0.00"></div>
+        <div class="form-group" style="margin-bottom: 0;"><label>ขยะทั่วไป (ฝังกลบ)</label><input type="number" step="0.01" min="0" name="generalWaste" placeholder="0.00"></div>
+      </section>
+
+      <section class="form-section">
+        <div class="summary-box" style="margin-top: 0;">
           <span>ปริมาณรวมทั้งหมด:</span>
           <strong id="totalWasteDisplay">0.00</strong> กิโลกรัม
         </div>
       </section>
+      <!-- สิ้นสุด: ปริมาณขยะ -->
 
-      <!-- ส่วนที่ 4 (หรือ 3): ข้อเสนอแนะ -->
+      <!-- เพิ่มพาร์ทปลายทางขยะ ตรงนี้ครับ -->
       <section class="form-section">
-        <h2 id="titleSectionFeedback">ส่วนที่ 3: ข้อเสนอแนะ / แจ้งปัญหา</h2>
+        <h2>ปลายทางขยะ</h2>
+        
+        <div style="margin-bottom: 20px;">
+          <h4 style="margin-bottom: 10px; font-size: 16px; color: #475569;">--- ระบบบำบัด ---</h4>
+          <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 15px; cursor: pointer;">
+            <input type="checkbox" id="destTreatment" name="destTreatment" style="width: 20px; height: 20px; margin: 0;">
+            ส่งเข้าระบบบำบัด (น้ำเสีย)
+          </label>
+        </div>
+
+        <div style="margin-bottom: 0;">
+          <h4 style="margin-bottom: 10px; font-size: 16px; color: #475569;">--- เทศบาล ---</h4>
+          <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 15px; cursor: pointer;">
+            <input type="checkbox" id="destLandfill" name="destLandfill" style="width: 20px; height: 20px; margin: 0;">
+            (ไปหลุมฝังกลบ)
+          </label>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2 id="titleSectionFeedback">ข้อเสนอแนะ / แจ้งปัญหา</h2>
         <div class="form-group">
           <textarea id="feedback" name="feedback" rows="3" placeholder="ระบุคำแนะนำ หรือแจ้งปัญหาที่พบ..."></textarea>
         </div>
@@ -101,7 +126,6 @@
     </form>
   </div>
 
-  <!-- Popup แจ้งเตือนเมื่อส่งข้อมูลสำเร็จ -->
   <div id="successPopup" class="popup-overlay" style="display: none;">
     <div class="popup-content">
       <div class="popup-icon">✓</div>
