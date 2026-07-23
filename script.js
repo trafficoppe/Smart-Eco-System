@@ -46,12 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // บังคับให้ช่องหมายเลขจุดเก็บ พิมพ์ได้เฉพาะเลข 0-9 และได้แค่ 1 ตัว
+  // บังคับให้ช่องหมายเลขจุดเก็บ พิมพ์ได้เฉพาะตัวเลขเท่านั้น (กี่หลักก็ได้)
   if (pointInput) {
     pointInput.addEventListener('input', function(e) {
       this.value = this.value.replace(/[^0-9]/g, '');
-      if (this.value.length > 1) {
-        this.value = this.value.substring(0, 1);
-      }
     });
   }
 

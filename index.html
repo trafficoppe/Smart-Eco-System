@@ -44,16 +44,14 @@
           <input type="text" id="departmentInput" name="departmentInput" placeholder="พิมพ์ชื่อเต็ม หรือตัวย่อ" autocomplete="off" required>
         </div>
 
-        <!-- ย้ายหมายเลขจุดเก็บมาไว้ตรงนี้แทนชื่อกลุ่ม -->
         <div class="form-group">
           <label for="pointInput">หมายเลขจุดเก็บ <span class="req">*</span></label>
-          <!-- เปลี่ยนจาก type="number" เป็น text แล้วบังคับด้วย pattern/maxlength -->
-          <input type="text" id="pointInput" name="pointInput" placeholder="ตัวอย่าง: 1, 2, 3" 
-                 maxlength="1" 
-                 pattern="[0-9]" 
+          <!-- เอา maxlength="1" ออก เพื่อให้พิมพ์ได้หลายหลัก -->
+          <input type="text" id="pointInput" name="pointInput" placeholder="ตัวอย่าง: 1 , 15" 
+                 pattern="[0-9]*" 
                  inputmode="numeric" 
                  required>
-          <small style="display:block; color:#666; margin-top:4px; font-size:13px;">กรอกตัวเลขได้ 1 ตัวเท่านั้น (0-9)</small>
+          <small style="display:block; color:#666; margin-top:4px; font-size:13px;">กรอกเฉพาะตัวเลขเท่านั้น</small>
         </div>
       </section>
 
