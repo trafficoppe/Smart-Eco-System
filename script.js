@@ -131,13 +131,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  const wasteInputs = document.querySelectorAll('.grid-2 input[type="number"]');
+  const wasteInputs = document.querySelectorAll('.form-section input[type="number"]');
+  const destWaterText = document.getElementById('destWaterText');
+  const destGeneralText = document.getElementById('destGeneralText');
+
   wasteInputs.forEach(input => {
     input.addEventListener('input', (e) => {
       const fieldName = e.target.name;
       const val = parseFloat(e.target.value) || 0;
-      formState.wasteMetrics[fieldName] = val >= 0 ? val : 0;
+      
+      if(formState.wasteMetrics[fieldName] !== undefined) {
+          formState.wasteMetrics[fieldName] = val >= 0 ? val : 0;
+      }
       totalDisplay.textContent = formState.getTotalWaste().toFixed(2);
+
+      // โชว์ข้อความปลายทางอัตโนมัติเมื่อตัวเลขมากกว่า 0
+      if (fieldName === 'wasteWater') {
+        destWaterText.style.display = val > 0 ? 'block' : 'none';
+      }
+      if (fieldName === 'generalWaste') {
+        destGeneralText.style.display = val > 0 ? 'block' : 'none';
+      }
     });
   });
 

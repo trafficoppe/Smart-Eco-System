@@ -60,11 +60,11 @@
 
       <section class="form-section">
         <h2>ขยะรีไซเคิล</h2>
-        <div class="form-group"><label>ขวดน้ำพลาสติก</label><input type="number" step="0.01" min="0" name="recycle_bottle" placeholder="0.00"></div>
-        <div class="form-group"><label>ขวดแก้ว</label><input type="number" step="0.01" min="0" name="recycle_glass" placeholder="0.00"></div>
-        <div class="form-group"><label>กระป๋อง</label><input type="number" step="0.01" min="0" name="recycle_can" placeholder="0.00"></div>
-        <div class="form-group"><label>หลอดพลาสติก</label><input type="number" step="0.01" min="0" name="recycle_straw" placeholder="0.00"></div>
-        <div class="form-group" style="margin-bottom: 0;"><label>ฝาขวด</label><input type="number" step="0.01" min="0" name="recycle_cap" placeholder="0.00"></div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <!-- รวมเป็นช่องเดียว และมีคำแนะนำให้เข้าใจง่าย -->
+          <label>ขยะรีไซเคิล (เช่น ขวดพลาสติก, ขวดแก้ว, กระป๋อง)</label>
+          <input type="number" step="0.01" min="0" name="recycle_total" placeholder="0.00">
+        </div>
       </section>
 
       <section class="form-section">
@@ -82,8 +82,22 @@
 
       <section class="form-section">
         <h2>ขยะประเภทอื่นๆ</h2>
-        <div class="form-group"><label>น้ำเสีย</label><input type="number" step="0.01" min="0" name="wasteWater" placeholder="0.00"></div>
-        <div class="form-group" style="margin-bottom: 0;"><label>ขยะทั่วไป (ฝังกลบ)</label><input type="number" step="0.01" min="0" name="generalWaste" placeholder="0.00"></div>
+        <div class="form-group">
+          <label>น้ำเสีย</label>
+          <input type="number" step="0.01" min="0" name="wasteWater" placeholder="0.00">
+          <!-- ข้อความที่จะเด้งขึ้นมาอัตโนมัติ (ซ่อนไว้ก่อน) -->
+          <small id="destWaterText" style="display:none; color:#0056b3; margin-top:4px; font-weight:600;">
+            ➡️ ส่งเข้าระบบบำบัดน้ำเสีย
+          </small>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>ขยะทั่วไป (ฝังกลบ)</label>
+          <input type="number" step="0.01" min="0" name="generalWaste" placeholder="0.00">
+          <!-- ข้อความที่จะเด้งขึ้นมาอัตโนมัติ (ซ่อนไว้ก่อน) -->
+          <small id="destGeneralText" style="display:none; color:#d98f04; margin-top:4px; font-weight:600;">
+            ➡️ ไปหลุมฝังกลบ
+          </small>
+        </div>
       </section>
 
       <section class="form-section">
@@ -93,27 +107,6 @@
         </div>
       </section>
       <!-- สิ้นสุด: ปริมาณขยะ -->
-
-      <!-- เพิ่มพาร์ทปลายทางขยะ ตรงนี้ครับ -->
-      <section class="form-section">
-        <h2>ปลายทางขยะ</h2>
-        
-        <div style="margin-bottom: 20px;">
-          <h4 style="margin-bottom: 10px; font-size: 16px; color: #475569;">--- ระบบบำบัด ---</h4>
-          <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 15px; cursor: pointer;">
-            <input type="checkbox" id="destTreatment" name="destTreatment" style="width: 20px; height: 20px; margin: 0;">
-            ส่งเข้าระบบบำบัด (น้ำเสีย)
-          </label>
-        </div>
-
-        <div style="margin-bottom: 0;">
-          <h4 style="margin-bottom: 10px; font-size: 16px; color: #475569;">--- เทศบาล ---</h4>
-          <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 15px; cursor: pointer;">
-            <input type="checkbox" id="destLandfill" name="destLandfill" style="width: 20px; height: 20px; margin: 0;">
-            (ไปหลุมฝังกลบ)
-          </label>
-        </div>
-      </section>
 
       <section class="form-section">
         <h2 id="titleSectionFeedback">ข้อเสนอแนะ / แจ้งปัญหา</h2>
