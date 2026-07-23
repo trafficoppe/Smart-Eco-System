@@ -1,187 +1,203 @@
-// ====== ดึง URL Google Apps Script จากไฟล์ config.js ======
 const SCRIPT_URL = CONFIG.GOOGLE_SHEETS.WEB_APP_URL;
 
-let allData = []; // เก็บข้อมูลทั้งหมดไว้สำหรับ Filter (Ignoring header row)
-let chartInstances = {}; // เก็บกราฟไว้เพื่อลบและวาดใหม่เวลากดเปลี่ยน Filter
+let allData = []; 
+let pieChartInstance = null; 
+let barChartInstance = null;
+
+// ==========================================
+// ตั้งค่าฟอนต์มาตรฐานของกราฟทั้งหมด
+// ==========================================
+Chart.defaults.font.family = "'Anuphan', sans-serif";
+Chart.defaults.font.size = 16; 
+Chart.defaults.color = '#475569'; 
+
+// เปิดใช้งาน Plugin ตัวเลขบนกราฟ
+Chart.register(ChartDataLabels);
 
 document.addEventListener('DOMContentLoaded', () => {
   fetchDataAndRender();
-
-  // ตั้งค่าให้เมื่อกดเปลี่ยนตัวกรอง ให้วาดกราฟใหม่
   document.getElementById('filter-year').addEventListener('change', applyFilters);
   document.getElementById('filter-dept').addEventListener('change', applyFilters);
-  document.getElementById('filter-activity').addEventListener('change', applyFilters);
 });
 
 async function fetchDataAndRender() {
   try {
     const response = await fetch(SCRIPT_URL);
-    // Data is now [[HeaderRow], [DataRow1], [DataRow2]]
     const data = await response.json();
 
-    // บันทึกข้อมูลทั้งหมด โดยตัดแถวหัวข้อออก (Ignore header row)
-    allData = data.slice(1);
+    allData = data.slice(1); 
 
     document.getElementById('loading').style.display = 'none';
     document.getElementById('dashboard-content').style.display = 'block';
 
-    populateFilters(); // สร้างตัวเลือกในปุ่ม
-    applyFilters();    // วาดกราฟครั้งแรก
-
+    populateFilters();
+    applyFilters();
+    
   } catch (error) {
     document.getElementById('loading').textContent = 'เกิดข้อผิดพลาดในการโหลดข้อมูล หรือยังไม่ได้อัปเดตสคริปต์ (Deploy)';
-    console.error('Error fetching data:', error);
+    console.error('Error:', error);
   }
 }
 
-// =====================================
-// 1. ระบบจัดการตัวกรอง (Filters) - Using Indices
-// =====================================
 function populateFilters() {
   const yearSet = new Set();
   const deptSet = new Set();
-  const actSet = new Set();
 
   allData.forEach(row => {
-    // หาปี (คอลัมน์ B - Index 1)
-    const dateStr = row[1]; // Column B: วันที่จัดเก็บข้อมูล
+    const dateStr = row[1];
     if (dateStr) {
       const year = new Date(dateStr).getFullYear();
       if (!isNaN(year)) yearSet.add(year);
     }
-    // หาคณะ (คอลัมน์ E - Index 4)
-    const dept = row[4]; // Column E: คณะ/ส่วนงาน
+    const dept = row[4];
     if (dept) deptSet.add(dept);
-    // หากิจกรรม (คอลัมน์ H - Index 7)
-    const act = row[7]; // Column H: ชื่อกิจกรรมที่จัดเก็บ
-    if (act) actSet.add(act);
   });
 
-  // ใส่ตัวเลือกลงใน Dropdown
   const yearSelect = document.getElementById('filter-year');
   [...yearSet].sort().reverse().forEach(year => {
-    yearSelect.innerHTML += `<option value="${year}">📅 ปี ${year}</option>`;
+    yearSelect.innerHTML += `<option value="${year}">ปี ${year}</option>`;
   });
 
   const deptSelect = document.getElementById('filter-dept');
   [...deptSet].sort().forEach(dept => {
-    deptSelect.innerHTML += `<option value="${dept}">🏢 ${dept}</option>`;
-  });
-
-  const actSelect = document.getElementById('filter-activity');
-  [...actSet].sort().forEach(act => {
-    actSelect.innerHTML += `<option value="${act}">🎯 ${act}</option>`;
+    deptSelect.innerHTML += `<option value="${dept}">${dept}</option>`;
   });
 }
 
 function applyFilters() {
   const yearFilter = document.getElementById('filter-year').value;
   const deptFilter = document.getElementById('filter-dept').value;
-  const actFilter = document.getElementById('filter-activity').value;
 
-  // กรองข้อมูลตามที่เลือก (Using Indices)
   const filteredData = allData.filter(row => {
-    // Column B (1), Column E (4), Column H (7)
-    const dateStr = row[1]; // B: วันที่จัดเก็บข้อมูล
+    const dateStr = row[1];
     const rowYear = dateStr ? new Date(dateStr).getFullYear().toString() : '';
-    const rowDept = row[4]; // E: คณะ/ส่วนงาน
-    const rowAct = row[7]; // H: ชื่อกิจกรรมที่จัดเก็บ
+    const rowDept = row[4];
 
     const matchYear = (yearFilter === 'all') || (rowYear === yearFilter);
     const matchDept = (deptFilter === 'all') || (rowDept === deptFilter);
-    const matchAct = (actFilter === 'all') || (rowAct === actFilter);
-
-    return matchYear && matchDept && matchAct;
+    return matchYear && matchDept;
   });
 
   processData(filteredData);
 }
 
-// =====================================
-// 2. คำนวณและวาดกราฟ
-// =====================================
 function processData(data) {
-  let totals = {
-    'ขยะเศษอาหาร': 0, 'น้ำเสีย': 0, 'ขยะรีไซเคิล': 0,
-    'ขยะพลังงาน': 0, 'ขยะทั่วไป (ฝังกลบ)': 0, 'ขยะเยื่อพืช (ทำปุ๋ย)': 0
-  };
-  let departmentTotals = {};
-  let activityTotals = {};
+  let totals = { food: 0, water: 0, recycle: 0, energy: 0, general: 0, plant: 0 };
 
   data.forEach(row => {
-    // คอลัมน์ J, K, L, M, N, O
-    // Index 9, 10, 11, 12, 13, 14
-    totals['ขยะเศษอาหาร'] += parseFloat(row[9]) || 0;
-    totals['น้ำเสีย'] += parseFloat(row[10]) || 0;
-    totals['ขยะรีไซเคิล'] += parseFloat(row[11]) || 0;
-    totals['ขยะพลังงาน'] += parseFloat(row[12]) || 0;
-    totals['ขยะทั่วไป (ฝังกลบ)'] += parseFloat(row[13]) || 0;
-    totals['ขยะเยื่อพืช (ทำปุ๋ย)'] += parseFloat(row[14]) || 0;
-
-    // คอลัมน์ P - Index 15
-    const totalRowWaste = parseFloat(row[15]) || 0;
-
-    // คอลัมน์ E - Index 4
-    const dept = row[4] || 'ไม่ระบุ'; // Column E: คณะ/ส่วนงาน
-    if (!departmentTotals[dept]) departmentTotals[dept] = 0;
-    departmentTotals[dept] += totalRowWaste;
-
-    // คอลัมน์ H - Index 7
-    const act = row[7] || 'ไม่ระบุ'; // Column H: ชื่อกิจกรรมที่จัดเก็บ
-    if (!activityTotals[act]) activityTotals[act] = 0;
-    activityTotals[act] += totalRowWaste;
+    totals.recycle += (parseFloat(row[6]) || 0) + (parseFloat(row[7]) || 0);
+    totals.energy += (parseFloat(row[8]) || 0) + (parseFloat(row[9]) || 0) + (parseFloat(row[10]) || 0);
+    totals.plant += (parseFloat(row[11]) || 0);
+    totals.food += (parseFloat(row[12]) || 0);
+    totals.water += (parseFloat(row[13]) || 0);
+    totals.general += (parseFloat(row[15]) || 0);
   });
 
-  // อัปเดตไฮไลท์
-  let maxWasteType = ''; let maxWasteValue = -1;
-  for (const [key, value] of Object.entries(totals)) {
-    if (value > maxWasteValue) { maxWasteValue = value; maxWasteType = key; }
-  }
-  document.getElementById('top-waste-type').textContent = maxWasteType || '-';
-  document.getElementById('top-waste-type-amount').textContent = maxWasteValue > 0 ? maxWasteValue.toFixed(2) + ' กก.' : '0 กก.';
+  let totalWaste = totals.food + totals.water + totals.recycle + totals.energy + totals.general + totals.plant;
 
-  let maxDept = ''; let maxDeptValue = -1;
-  for (const [key, value] of Object.entries(departmentTotals)) {
-    if (value > maxDeptValue && key !== 'ไม่ระบุ') { maxDeptValue = value; maxDept = key; }
-  }
-  document.getElementById('top-department').textContent = maxDept || '-';
-  document.getElementById('top-department-amount').textContent = maxDeptValue > 0 ? maxDeptValue.toFixed(2) + ' กก.' : '0 กก.';
+  const categories = [
+    { name: 'ขยะเศษอาหาร', val: totals.food, color: '#4A90E2' },
+    { name: 'น้ำเสีย', val: totals.water, color: '#F5A623' },
+    { name: 'ขยะรีไซเคิล', val: totals.recycle, color: '#7ED321' },
+    { name: 'ขยะพลังงาน (RDF)', val: totals.energy, color: '#9013FE' },
+    { name: 'ขยะทั่วไป (ฝังกลบ)', val: totals.general, color: '#50E3C2' },
+    { name: 'ขยะเยื่อพืช (ทำปุ๋ย)', val: totals.plant, color: '#D0021B' }
+  ];
 
-  // วาดกราฟ
-  renderWasteTypeChart(totals);
-  renderTopChart('activityChart', activityTotals, 'กิจกรรม (กก.)', '#feca57');
-  renderTopChart('departmentChart', departmentTotals, 'หน่วยงาน (กก.)', '#1dd1a1');
+  renderSummaryCards(totals, totalWaste);
+  renderPieChart(categories);
+  renderBarChart(categories);
 }
 
-// ระบบทำลายกราฟเก่าก่อนวาดใหม่ (ป้องกันกราฟซ้อนกัน)
-function renderChart(chartId, config) {
-  if (chartInstances[chartId]) { chartInstances[chartId].destroy(); }
-  const ctx = document.getElementById(chartId).getContext('2d');
-  chartInstances[chartId] = new Chart(ctx, config);
+function renderSummaryCards(totals, totalWaste) {
+  let diverted = totals.food + totals.water + totals.recycle + totals.energy + totals.plant;
+  let landfill = totals.general;
+
+  let divPercent = totalWaste > 0 ? ((diverted / totalWaste) * 100).toFixed(2) : '0.00';
+  let landPercent = totalWaste > 0 ? ((landfill / totalWaste) * 100).toFixed(2) : '0.00';
+
+  document.getElementById('totalWasteText').innerHTML = `${totalWaste.toFixed(2)} <span class="unit">กก.</span>`;
+  document.getElementById('divertedText').innerHTML = `${diverted.toFixed(2)} <span class="unit">กก.</span>`;
+  document.getElementById('divertedPercent').textContent = `${divPercent}%`;
+  document.getElementById('landfillText').innerHTML = `${landfill.toFixed(2)} <span class="unit">กก.</span>`;
+  document.getElementById('landfillPercent').textContent = `${landPercent}%`;
 }
 
-function renderWasteTypeChart(totals) {
-  renderChart('wasteTypeChart', {
-    type: 'doughnut',
+function renderPieChart(categories) {
+  if (pieChartInstance) { pieChartInstance.destroy(); }
+  const ctx = document.getElementById('wastePieChart').getContext('2d');
+  
+  pieChartInstance = new Chart(ctx, {
+    type: 'pie',
     data: {
-      labels: Object.keys(totals),
+      labels: categories.map(c => c.name),
       datasets: [{
-        data: Object.values(totals),
-        backgroundColor: ['#ff9f43', '#0abde3', '#1dd1a1', '#feca57', '#576574', '#10ac84']
+        data: categories.map(c => c.val),
+        backgroundColor: categories.map(c => c.color),
+        borderWidth: 2,
+        borderColor: '#ffffff'
       }]
     },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { 
+          position: 'bottom',
+          labels: { padding: 24 }
+        },
+        // ตั้งค่าตัวเลขเปอร์เซ็นต์ในกราฟวงกลม
+        datalabels: {
+          color: '#ffffff', // สีตัวเลขสีขาว
+          font: {
+            weight: 'bold',
+            size: 14,
+            family: "'Anuphan', sans-serif"
+          },
+          formatter: (value, ctx) => {
+            // คำนวณหาผลรวมทั้งหมด
+            let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+            if (value === 0 || sum === 0) return null; // ถ้าเป็น 0 ไม่ต้องแสดงข้อความ
+            
+            let percentage = (value * 100 / sum).toFixed(1) + '%'; // ทศนิยม 1 ตำแหน่ง เช่น 15.2%
+            return percentage;
+          }
+        }
+      }
+    }
   });
 }
 
-function renderTopChart(canvasId, dataObj, labelStr, barColor) {
-  const sortedData = Object.entries(dataObj).filter(([k, v]) => k !== 'ไม่ระบุ' && v > 0).sort((a, b) => b[1] - a[1]).slice(0, 5);
-  renderChart(canvasId, {
+function renderBarChart(categories) {
+  if (barChartInstance) { barChartInstance.destroy(); }
+  const ctx = document.getElementById('wasteBarChart').getContext('2d');
+  
+  let sortedData = [...categories].sort((a, b) => b.val - a.val);
+
+  barChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: sortedData.map(i => i[0]),
-      datasets: [{ label: labelStr, data: sortedData.map(i => i[1]), backgroundColor: barColor, borderRadius: 4 }]
+      labels: sortedData.map(c => c.name),
+      datasets: [{
+        label: 'ปริมาณ (กก.)',
+        data: sortedData.map(c => c.val),
+        backgroundColor: sortedData.map(c => c.color),
+        borderRadius: 6
+      }]
     },
-    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { 
+        legend: { display: false },
+        // ปิดตัวเลขบนกราฟแท่งเพื่อไม่ให้ดูรกเกินไป
+        datalabels: { display: false }
+      },
+      scales: {
+        x: { grid: { color: '#e2e8f0' } },
+        y: { grid: { display: false } }
+      }
+    }
   });
 }

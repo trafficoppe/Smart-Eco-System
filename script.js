@@ -3,12 +3,11 @@ const formState = {
   fullName: '',
   email: '',
   department: '',
-  groupName: '', 
   locationDetail: '', 
   activityName: '',
- wasteMetrics: {
-    recycle_plastic_bottle: 0,    // เพิ่มช่องที่ 1
-    recycle_glass_can_other: 0,   // เพิ่มช่องที่ 2
+  wasteMetrics: {
+    recycle_plastic_bottle: 0,    
+    recycle_glass_can_other: 0,   
     energy_plastic: 0,
     energy_stick: 0,
     energy_spoon: 0,
@@ -18,6 +17,8 @@ const formState = {
     generalWaste: 0
   },
   feedback: '',
+  destTreatment: '',
+  destLandfill: '',
   
   getTotalWaste() {
     return Object.values(this.wasteMetrics).reduce((acc, curr) => acc + (parseFloat(curr) || 0), 0);
@@ -32,24 +33,22 @@ document.addEventListener('DOMContentLoaded', () => {
   
   const pointInput = document.getElementById('pointInput');
   const deptInput = document.getElementById('departmentInput');
-  const groupNameInput = document.getElementById('groupName');
-  const groupNameContainer = document.getElementById('groupNameContainer');
-  
   const activityNameInput = document.getElementById('activityName');
   
   const successPopup = document.getElementById('successPopup');
   const closePopupBtn = document.getElementById('closePopupBtn');
 
+  // ตั้งค่าวันที่เริ่มต้น
   const recordDateInput = document.getElementById('recordDate');
-  recordDateInput.valueAsDate = new Date();
-  formState.recordDate = recordDateInput.value;
+  if (recordDateInput) {
+    recordDateInput.valueAsDate = new Date();
+    formState.recordDate = recordDateInput.value;
+  }
+
   // บังคับให้ช่องหมายเลขจุดเก็บ พิมพ์ได้เฉพาะเลข 0-9 และได้แค่ 1 ตัว
-  const pointInputElement = document.getElementById('pointInput');
-  if (pointInputElement) {
-    pointInputElement.addEventListener('input', function(e) {
-      // แทนที่ตัวอักษรที่ไม่ใช่ตัวเลข (0-9) ให้เป็นค่าว่างทันที
+  if (pointInput) {
+    pointInput.addEventListener('input', function(e) {
       this.value = this.value.replace(/[^0-9]/g, '');
-      // ถ้าเผลอหลุดมาเกิน 1 ตัว ให้ตัดเหลือแค่ตัวแรก
       if (this.value.length > 1) {
         this.value = this.value.substring(0, 1);
       }
@@ -64,17 +63,20 @@ document.addEventListener('DOMContentLoaded', () => {
     );
   }
 
-  emailInput.addEventListener('input', (e) => {
-    const value = e.target.value.trim();
-    if (value && value.includes('@') && !validateMahidolEmail(value)) {
-      emailError.textContent = CONFIG.ORG.ERROR_MESSAGE;
-      emailError.style.display = 'block';
-    } else {
-      emailError.style.display = 'none';
-    }
-  });
+  if (emailInput) {
+    emailInput.addEventListener('input', (e) => {
+      const value = e.target.value.trim();
+      if (value && value.includes('@') && !validateMahidolEmail(value)) {
+        emailError.textContent = CONFIG.ORG.ERROR_MESSAGE;
+        emailError.style.display = 'block';
+      } else {
+        emailError.style.display = 'none';
+      }
+    });
+  }
 
   function setupAutocomplete(inputElement, dataArray, onSelectCallback) {
+    if (!inputElement) return;
     inputElement.addEventListener('input', function(e) {
       let a, b, val = this.value;
       closeAllLists();
@@ -122,10 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setupAutocomplete(deptInput, CONFIG.DEPARTMENTS, (selectedItem) => {
     formState.department = selectedItem.fullName;
-    // แสดงช่องชื่อกลุ่ม เมื่อมีการเลือกคณะแล้ว
-    if (formState.department !== '') {
-       groupNameContainer.style.display = 'flex';
-    }
   });
 
   const wasteInputs = document.querySelectorAll('.form-section input[type="number"]');
@@ -140,57 +138,64 @@ document.addEventListener('DOMContentLoaded', () => {
       if(formState.wasteMetrics[fieldName] !== undefined) {
           formState.wasteMetrics[fieldName] = val >= 0 ? val : 0;
       }
-      totalDisplay.textContent = formState.getTotalWaste().toFixed(2);
+      if (totalDisplay) {
+        totalDisplay.textContent = formState.getTotalWaste().toFixed(2);
+      }
 
-      // โชว์ข้อความปลายทางอัตโนมัติเมื่อตัวเลขมากกว่า 0
-      if (fieldName === 'wasteWater') {
+      // โชว์ข้อความปลายทางอัตโนมัติ
+      if (fieldName === 'wasteWater' && destWaterText) {
         destWaterText.style.display = val > 0 ? 'block' : 'none';
       }
-      if (fieldName === 'generalWaste') {
+      if (fieldName === 'generalWaste' && destGeneralText) {
         destGeneralText.style.display = val > 0 ? 'block' : 'none';
       }
     });
   });
 
-  closePopupBtn.addEventListener('click', () => { successPopup.style.display = 'none'; });
+  if (closePopupBtn) {
+    closePopupBtn.addEventListener('click', () => { successPopup.style.display = 'none'; });
+  }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    formState.recordDate = document.getElementById('recordDate').value;
-    formState.fullName = document.getElementById('fullName').value.trim();
-    formState.email = document.getElementById('email').value.trim();
-    formState.groupName = groupNameInput.value.trim();
-    formState.activityName = activityNameInput.value.trim();
-    formState.feedback = document.getElementById('feedback').value.trim();
-    formState.locationDetail = pointInput.value.trim(); // บังคับส่งข้อมูลจุดเก็บทุกหน่วยงาน
-    formState.destTreatment = document.getElementById('destTreatment').checked ? 'ส่งเข้าระบบบำบัด (น้ำเสีย)' : '';
-    formState.destLandfill = document.getElementById('destLandfill').checked ? 'เทศบาล (ไปหลุมฝังกลบ)' : '';
+    // เพิ่มการดักจับค่าแบบปลอดภัย (ถ้าช่องโดนลบก็ไม่ Error)
+    formState.recordDate = recordDateInput ? recordDateInput.value : '';
+    formState.fullName = document.getElementById('fullName') ? document.getElementById('fullName').value.trim() : '';
+    formState.email = emailInput ? emailInput.value.trim() : '';
+    formState.activityName = activityNameInput ? activityNameInput.value.trim() : '-';
+    formState.feedback = document.getElementById('feedback') ? document.getElementById('feedback').value.trim() : '';
+    formState.locationDetail = pointInput ? pointInput.value.trim() : '-'; 
+    
+    // ตั้งค่าปลายทางอัตโนมัติ
+    formState.destTreatment = formState.wasteMetrics.wasteWater > 0 ? 'ส่งเข้าระบบบำบัด (น้ำเสีย)' : '';
+    formState.destLandfill = formState.wasteMetrics.generalWaste > 0 ? 'เทศบาล (ไปหลุมฝังกลบ)' : '';
 
-    let isDeptValid = CONFIG.DEPARTMENTS.some(d => d.fullName === deptInput.value);
-    if (!isDeptValid) {
-      alert('โปรดเลือก คณะ/หน่วยงาน จากรายการที่ระบบแนะนำเท่านั้นครับ');
-      deptInput.focus();
-      return;
+    if (deptInput) {
+      let isDeptValid = CONFIG.DEPARTMENTS.some(d => d.fullName === deptInput.value);
+      if (!isDeptValid) {
+        alert('โปรดเลือก คณะ/หน่วยงาน จากรายการที่ระบบแนะนำเท่านั้นครับ');
+        deptInput.focus();
+        return;
+      }
     }
 
-    if (!validateMahidolEmail(formState.email)) {
+    if (emailInput && !validateMahidolEmail(formState.email)) {
       alert(CONFIG.ORG.ERROR_MESSAGE);
       emailInput.focus();
       return;
     }
 
     let payload = {
-      destTreatment: formState.destTreatment,
-      destLandfill: formState.destLandfill,
       recordDate: formState.recordDate,
       fullName: formState.fullName,
       email: formState.email,
       department: formState.department,
-      groupName: formState.groupName,
       locationDetail: formState.locationDetail,
       activityName: formState.activityName,
       ...formState.wasteMetrics,
+      destTreatment: formState.destTreatment,
+      destLandfill: formState.destLandfill,
       totalWaste: formState.getTotalWaste(),
       feedback: formState.feedback
     };
@@ -208,12 +213,16 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify(payload)
         });
       }
-      successPopup.style.display = 'flex';
+      if (successPopup) successPopup.style.display = 'flex';
       form.reset();
-      recordDateInput.valueAsDate = new Date();
-      totalDisplay.textContent = '0.00';
+      if (recordDateInput) recordDateInput.valueAsDate = new Date();
+      if (totalDisplay) totalDisplay.textContent = '0.00';
       formState.department = '';
-      groupNameContainer.style.display = 'none';
+      
+      // ซ่อนข้อความปลายทางหลังจากส่งสำเร็จ
+      if(destWaterText) destWaterText.style.display = 'none';
+      if(destGeneralText) destGeneralText.style.display = 'none';
+      
     } catch (error) {
       alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล โปรดลองใหม่อีกครั้ง');
     } finally {

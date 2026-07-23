@@ -1,6 +1,6 @@
 const CONFIG = {
   GOOGLE_SHEETS: {
-    WEB_APP_URL: 'ใส่_WEB_APP_URL_ของคุณที่นี่'
+    WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbzsjohMONn-6Q8XlOmNvEQH-hA-pDyXjS9AYM4tcwViJ0goNu5TDfxpz8Fr7tKcKoUB/exec'
   },
   ORG: {
     ALLOWED_EMAIL_DOMAINS: ['mahidol.ac.th', 'mahidol.edu'],
