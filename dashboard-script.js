@@ -18,6 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchDataAndRender();
   document.getElementById('filter-year').addEventListener('change', applyFilters);
   document.getElementById('filter-dept').addEventListener('change', applyFilters);
+  
+  // เพิ่มบรรทัดนี้ เพื่อให้ระบบกรองข้อมูลทันทีที่เปลี่ยนจุดเก็บ
+  document.getElementById('filter-point').addEventListener('change', applyFilters); 
 });
 
 async function fetchDataAndRender() {
@@ -42,6 +45,7 @@ async function fetchDataAndRender() {
 function populateFilters() {
   const yearSet = new Set();
   const deptSet = new Set();
+  const pointSet = new Set(); // เพิ่ม Set สำหรับเก็บหมายเลขจุดที่ไม่ซ้ำ
 
   allData.forEach(row => {
     const dateStr = row[1];
@@ -51,6 +55,11 @@ function populateFilters() {
     }
     const dept = row[4];
     if (dept) deptSet.add(dept);
+    
+    // ดึงค่าหมายเลขจุดเก็บ (สมมติว่าอยู่ในคอลัมน์ F หรือ index 5 ของ Sheet)
+    // หากในชีทของคุณ หมายเลขจุดเก็บอยู่คอลัมน์อื่น ให้เปลี่ยนเลข 5 เป็นเลขอื่น (A=0, B=1, C=2, ...)
+    const point = row[5]; 
+    if (point) pointSet.add(point);
   });
 
   const yearSelect = document.getElementById('filter-year');
@@ -62,20 +71,33 @@ function populateFilters() {
   [...deptSet].sort().forEach(dept => {
     deptSelect.innerHTML += `<option value="${dept}">${dept}</option>`;
   });
+
+  // เพิ่มตัวเลือกกลุ่มเข้าไปใน Dropdown
+  const pointSelect = document.getElementById('filter-point');
+  [...pointSet].sort((a, b) => Number(a) - Number(b)).forEach(point => {
+    pointSelect.innerHTML += `<option value="${point}">กลุ่มที่ ${point}</option>`;
+  });
 }
 
 function applyFilters() {
   const yearFilter = document.getElementById('filter-year').value;
   const deptFilter = document.getElementById('filter-dept').value;
+  const pointFilter = document.getElementById('filter-point').value; // ดึงค่าจาก Dropdown ใหม่
 
   const filteredData = allData.filter(row => {
     const dateStr = row[1];
     const rowYear = dateStr ? new Date(dateStr).getFullYear().toString() : '';
     const rowDept = row[4];
+    
+    // ดึงค่าหมายเลขจุดเก็บจากแถวข้อมูล (ต้องตรงกับ index ในฟังก์ชันด้านบน)
+    const rowPoint = row[5] ? row[5].toString().trim() : ''; 
 
     const matchYear = (yearFilter === 'all') || (rowYear === yearFilter);
     const matchDept = (deptFilter === 'all') || (rowDept === deptFilter);
-    return matchYear && matchDept;
+    const matchPoint = (pointFilter === 'all') || (rowPoint === pointFilter); // ตรวจสอบเงื่อนไขจุดเก็บ
+
+    // ข้อมูลต้องตรงกับทุกเงื่อนไข (ปี, คณะ, จุดเก็บ)
+    return matchYear && matchDept && matchPoint;
   });
 
   processData(filteredData);
