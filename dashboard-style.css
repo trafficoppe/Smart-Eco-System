@@ -1,6 +1,6 @@
 * {
   box-sizing: border-box;
-  font-family: 'Anuphan', sans-serif !important; /* บังคับใช้ฟอนต์ Anuphan กับทุกสิ่ง */
+  font-family: 'Anuphan', sans-serif !important; 
   margin: 0;
   padding: 0;
 }
@@ -8,7 +8,7 @@
 body {
   background-color: #f4f7f6; 
   color: #333;
-  font-size: 18px; /* ปรับขนาดตั้งต้นให้ใหญ่ขึ้นเท่าหน้าฟอร์ม */
+  font-size: 18px; 
 }
 
 .dashboard-wrapper {
@@ -30,7 +30,7 @@ body {
   border-radius: 30px;
   text-decoration: none;
   font-weight: 600;
-  font-size: 18px; /* ปุ่มใหญ่ขึ้น */
+  font-size: 18px; 
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   align-self: flex-start;
   transition: all 0.2s;
@@ -48,7 +48,7 @@ body {
   box-shadow: 0 4px 12px rgba(26, 95, 122, 0.2);
 }
 
-.dash-header h1 { font-size: 28px; margin-bottom: 12px; } /* หัวข้อใหญ่ขึ้น */
+.dash-header h1 { font-size: 28px; margin-bottom: 12px; } 
 .dash-header p { font-size: 18px; opacity: 0.9; }
 
 /* ตัวกรอง */
@@ -67,7 +67,7 @@ body {
   padding: 14px 16px;
   border-radius: 8px;
   border: 2px solid #cbd5e1;
-  font-size: 18px; /* ตัวหนังสือในช่องเลือกใหญ่ขึ้น */
+  font-size: 18px; 
   color: #333;
   background-color: #ffffff;
   outline: none;
@@ -99,14 +99,14 @@ body {
 }
 
 .stat-title {
-  font-size: 18px; /* หัวข้อการ์ดใหญ่ขึ้น */
+  font-size: 18px; 
   color: #64748b;
   margin-bottom: 12px;
   font-weight: 500;
 }
 
 .stat-value {
-  font-size: 36px; /* ตัวเลขสถิติใหญ่ขึ้นมาก */
+  font-size: 36px; 
   font-weight: 700;
   color: #1e293b;
 }
@@ -122,7 +122,7 @@ body {
   margin-top: 12px;
   padding: 6px 16px;
   border-radius: 20px;
-  font-size: 18px; /* เปอร์เซ็นต์ใหญ่ขึ้น */
+  font-size: 18px; 
   font-weight: 600;
 }
 
@@ -143,7 +143,7 @@ body {
 }
 
 .chart-title {
-  font-size: 22px; /* ชื่อกราฟใหญ่ขึ้น */
+  font-size: 22px; 
   color: #1e293b;
   margin-bottom: 24px;
   text-align: center;
@@ -164,4 +164,46 @@ body {
   padding: 40px;
   font-size: 20px;
   color: #64748b;
+}
+
+/* สไตล์สำหรับตารางแจกแจงรายวัน */
+.table-responsive {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.daily-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 16px;
+  text-align: right;
+  min-width: 650px;
+  border: 1px solid #cbd5e1; /* เพิ่มเส้นขอบนอกสุดของตาราง */
+}
+
+.daily-table th, .daily-table td {
+  padding: 12px 10px;
+  border: 1px solid #cbd5e1; /* เพิ่มเส้นกรอบทุกด้านให้เป็นเซลล์ */
+}
+
+.daily-table th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.daily-table tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+.daily-table tfoot {
+  font-weight: bold;
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+
+.daily-table tfoot td {
+  border-top: 2px solid #cbd5e1;
 }

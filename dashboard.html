@@ -35,13 +35,13 @@
         <select id="filter-dept">
           <option value="all">ทุกคณะ/ส่วนงาน (รวมทั้งหมด)</option>
         </select>
-        
+        <!-- ตัวกรองกลุ่ม (จุดเก็บ) -->
         <select id="filter-point">
           <option value="all">ทุกกลุ่ม (รวมทั้งหมด)</option>
         </select>
       </div>
 
-      <!-- การ์ดสรุปข้อมูล (แทนตารางสรุป) -->
+      <!-- การ์ดสรุปข้อมูล -->
       <div class="summary-grid">
         <div class="stat-card total-card">
           <div class="stat-title">ปริมาณรวมทั้งหมด</div>
@@ -67,11 +67,40 @@
         </div>
       </div>
 
-      <!-- กราฟแท่ง (แทนตารางรายละเอียด) -->
+      <!-- กราฟแท่ง -->
       <div class="chart-card">
         <h3 class="chart-title">ปริมาณขยะแต่ละประเภท (กก.)</h3>
         <div class="chart-container bar-container">
           <canvas id="wasteBarChart"></canvas>
+        </div>
+      </div>
+
+      <!-- ส่วนตารางแจกแจงรายวัน -->
+      <div class="chart-card" id="daily-summary-card" style="margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+          <h3 class="chart-title" style="margin-bottom: 0;">รายละเอียดปริมาณขยะรายวัน</h3>
+          <span id="dayCountBadge" style="background: #e2e8f0; padding: 6px 16px; border-radius: 20px; font-weight: 600; color: #475569; font-size: 16px;">
+            มีข้อมูล 0 วัน
+          </span>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="daily-table">
+            <thead>
+              <tr>
+                <th style="text-align: left;">วันที่</th>
+                <th>เศษอาหาร</th>
+                <th>น้ำเสีย</th>
+                <th>รีไซเคิล</th>
+                <th>พลังงาน</th>
+                <th>ทำปุ๋ย</th>
+                <th>ฝังกลบ</th>
+                <th>รวม (กก.)</th>
+              </tr>
+            </thead>
+            <tbody id="dailyTableBody"></tbody>
+            <tfoot id="dailyTableFoot"></tfoot>
+          </table>
         </div>
       </div>
 

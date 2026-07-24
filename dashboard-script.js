@@ -18,8 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchDataAndRender();
   document.getElementById('filter-year').addEventListener('change', applyFilters);
   document.getElementById('filter-dept').addEventListener('change', applyFilters);
-  
-  // เพิ่มบรรทัดนี้ เพื่อให้ระบบกรองข้อมูลทันทีที่เปลี่ยนจุดเก็บ
   document.getElementById('filter-point').addEventListener('change', applyFilters); 
 });
 
@@ -45,7 +43,7 @@ async function fetchDataAndRender() {
 function populateFilters() {
   const yearSet = new Set();
   const deptSet = new Set();
-  const pointSet = new Set(); // เพิ่ม Set สำหรับเก็บหมายเลขจุดที่ไม่ซ้ำ
+  const pointSet = new Set(); 
 
   allData.forEach(row => {
     const dateStr = row[1];
@@ -56,8 +54,7 @@ function populateFilters() {
     const dept = row[4];
     if (dept) deptSet.add(dept);
     
-    // ดึงค่าหมายเลขจุดเก็บ (สมมติว่าอยู่ในคอลัมน์ F หรือ index 5 ของ Sheet)
-    // หากในชีทของคุณ หมายเลขจุดเก็บอยู่คอลัมน์อื่น ให้เปลี่ยนเลข 5 เป็นเลขอื่น (A=0, B=1, C=2, ...)
+    // ดึงค่าหมายเลขกลุ่ม (คอลัมน์ F)
     const point = row[5]; 
     if (point) pointSet.add(point);
   });
@@ -72,7 +69,6 @@ function populateFilters() {
     deptSelect.innerHTML += `<option value="${dept}">${dept}</option>`;
   });
 
-  // เพิ่มตัวเลือกกลุ่มเข้าไปใน Dropdown
   const pointSelect = document.getElementById('filter-point');
   [...pointSet].sort((a, b) => Number(a) - Number(b)).forEach(point => {
     pointSelect.innerHTML += `<option value="${point}">กลุ่มที่ ${point}</option>`;
@@ -82,21 +78,18 @@ function populateFilters() {
 function applyFilters() {
   const yearFilter = document.getElementById('filter-year').value;
   const deptFilter = document.getElementById('filter-dept').value;
-  const pointFilter = document.getElementById('filter-point').value; // ดึงค่าจาก Dropdown ใหม่
+  const pointFilter = document.getElementById('filter-point').value; 
 
   const filteredData = allData.filter(row => {
     const dateStr = row[1];
     const rowYear = dateStr ? new Date(dateStr).getFullYear().toString() : '';
     const rowDept = row[4];
-    
-    // ดึงค่าหมายเลขจุดเก็บจากแถวข้อมูล (ต้องตรงกับ index ในฟังก์ชันด้านบน)
     const rowPoint = row[5] ? row[5].toString().trim() : ''; 
 
     const matchYear = (yearFilter === 'all') || (rowYear === yearFilter);
     const matchDept = (deptFilter === 'all') || (rowDept === deptFilter);
-    const matchPoint = (pointFilter === 'all') || (rowPoint === pointFilter); // ตรวจสอบเงื่อนไขจุดเก็บ
+    const matchPoint = (pointFilter === 'all') || (rowPoint === pointFilter); 
 
-    // ข้อมูลต้องตรงกับทุกเงื่อนไข (ปี, คณะ, จุดเก็บ)
     return matchYear && matchDept && matchPoint;
   });
 
@@ -129,6 +122,9 @@ function processData(data) {
   renderSummaryCards(totals, totalWaste);
   renderPieChart(categories);
   renderBarChart(categories);
+  
+  // เรียกวาดตารางสรุปรายวัน
+  renderDailyTable(data);
 }
 
 function renderSummaryCards(totals, totalWaste) {
@@ -168,20 +164,17 @@ function renderPieChart(categories) {
           position: 'bottom',
           labels: { padding: 24 }
         },
-        // ตั้งค่าตัวเลขเปอร์เซ็นต์ในกราฟวงกลม
         datalabels: {
-          color: '#ffffff', // สีตัวเลขสีขาว
+          color: '#ffffff',
           font: {
             weight: 'bold',
             size: 14,
             family: "'Anuphan', sans-serif"
           },
           formatter: (value, ctx) => {
-            // คำนวณหาผลรวมทั้งหมด
             let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-            if (value === 0 || sum === 0) return null; // ถ้าเป็น 0 ไม่ต้องแสดงข้อความ
-            
-            let percentage = (value * 100 / sum).toFixed(1) + '%'; // ทศนิยม 1 ตำแหน่ง เช่น 15.2%
+            if (value === 0 || sum === 0) return null;
+            let percentage = (value * 100 / sum).toFixed(1) + '%';
             return percentage;
           }
         }
@@ -213,7 +206,6 @@ function renderBarChart(categories) {
       maintainAspectRatio: false,
       plugins: { 
         legend: { display: false },
-        // ปิดตัวเลขบนกราฟแท่งเพื่อไม่ให้ดูรกเกินไป
         datalabels: { display: false }
       },
       scales: {
@@ -222,4 +214,113 @@ function renderBarChart(categories) {
       }
     }
   });
+}
+
+function renderDailyTable(data) {
+  const card = document.getElementById('daily-summary-card');
+  const tbody = document.getElementById('dailyTableBody');
+  const tfoot = document.getElementById('dailyTableFoot');
+  const dayCountBadge = document.getElementById('dayCountBadge');
+
+  if (!card || !tbody || !tfoot) return;
+
+  if (!data || data.length === 0) {
+    card.style.display = 'none';
+    return;
+  }
+  
+  card.style.display = 'block';
+
+  const dailyMap = {};
+
+  data.forEach(row => {
+    let rawDate = row[1];
+    let dateKey = 'ไม่ระบุวันที่';
+
+    if (rawDate) {
+      const d = new Date(rawDate);
+      if (!isNaN(d.getTime())) {
+        dateKey = d.toISOString().split('T')[0];
+      } else {
+        dateKey = String(rawDate).split('T')[0];
+      }
+    }
+
+    if (!dailyMap[dateKey]) {
+      dailyMap[dateKey] = { food: 0, water: 0, recycle: 0, energy: 0, plant: 0, general: 0, total: 0 };
+    }
+
+    let recycle = (parseFloat(row[6]) || 0) + (parseFloat(row[7]) || 0);
+    let energy = (parseFloat(row[8]) || 0) + (parseFloat(row[9]) || 0) + (parseFloat(row[10]) || 0);
+    let plant = parseFloat(row[11]) || 0;
+    let food = parseFloat(row[12]) || 0;
+    let water = parseFloat(row[13]) || 0;
+    let general = parseFloat(row[15]) || 0;
+    let sumRow = recycle + energy + plant + food + water + general;
+
+    dailyMap[dateKey].recycle += recycle;
+    dailyMap[dateKey].energy += energy;
+    dailyMap[dateKey].plant += plant;
+    dailyMap[dateKey].food += food;
+    dailyMap[dateKey].water += water;
+    dailyMap[dateKey].general += general;
+    dailyMap[dateKey].total += sumRow;
+  });
+
+  const sortedDates = Object.keys(dailyMap).sort();
+
+  if (dayCountBadge) {
+    dayCountBadge.textContent = `มีข้อมูลทั้งหมด ${sortedDates.length} วัน`;
+  }
+
+  let tbodyHTML = '';
+  let totals = { food: 0, water: 0, recycle: 0, energy: 0, plant: 0, general: 0, total: 0 };
+
+  sortedDates.forEach(dateStr => {
+    const item = dailyMap[dateStr];
+
+    let formattedDate = dateStr;
+    if (dateStr !== 'ไม่ระบุวันที่') {
+      const dObj = new Date(dateStr);
+      if (!isNaN(dObj.getTime())) {
+        formattedDate = dObj.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+      }
+    }
+
+    tbodyHTML += `
+      <tr>
+        <td style="text-align:left;">${formattedDate}</td>
+        <td>${item.food.toFixed(2)}</td>
+        <td>${item.water.toFixed(2)}</td>
+        <td>${item.recycle.toFixed(2)}</td>
+        <td>${item.energy.toFixed(2)}</td>
+        <td>${item.plant.toFixed(2)}</td>
+        <td>${item.general.toFixed(2)}</td>
+        <td style="color:#1a5f7a;"><strong>${item.total.toFixed(2)}</strong></td>
+      </tr>
+    `;
+
+    totals.food += item.food;
+    totals.water += item.water;
+    totals.recycle += item.recycle;
+    totals.energy += item.energy;
+    totals.plant += item.plant;
+    totals.general += item.general;
+    totals.total += item.total;
+  });
+
+  tbody.innerHTML = tbodyHTML;
+
+  tfoot.innerHTML = `
+    <tr>
+      <td style="text-align:left;"><strong>สรุปยอดรวม</strong></td>
+      <td>${totals.food.toFixed(2)}</td>
+      <td>${totals.water.toFixed(2)}</td>
+      <td>${totals.recycle.toFixed(2)}</td>
+      <td>${totals.energy.toFixed(2)}</td>
+      <td>${totals.plant.toFixed(2)}</td>
+      <td>${totals.general.toFixed(2)}</td>
+      <td style="color:#1a5f7a; font-size:1.1em;"><strong>${totals.total.toFixed(2)}</strong></td>
+    </tr>
+  `;
 }
